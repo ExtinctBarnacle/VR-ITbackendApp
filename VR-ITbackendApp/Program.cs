@@ -3,7 +3,7 @@ using VR_ITbackendApp.Controllers;
 var builder = WebApplication.CreateBuilder (args);
 var app = builder.Build();
 
-DBService.CreateToDoTable();
+TodoService.CreateToDoTable();
 ToDoController toDoController = new ToDoController();
 app.MapGet("/", () => toDoController.Index());
 

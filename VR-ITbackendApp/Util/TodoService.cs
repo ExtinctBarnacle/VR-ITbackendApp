@@ -1,8 +1,9 @@
 ﻿using System.Data.SQLite;
+using VR_ITbackendApp.Util;
 
 namespace VR_ITbackendApp
 {
-    class DBService
+    class TodoService : ITodoService
     {
         // файл базы данных
         static string СonnectionString = "Data Source=toDoDatabase.db; Version=3;";

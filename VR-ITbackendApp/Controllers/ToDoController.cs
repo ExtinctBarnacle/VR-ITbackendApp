@@ -28,7 +28,7 @@ namespace VR_ITbackendApp.Controllers
             {
                 return BadRequest("Invalid request");
             }
-            DBService.StoreDataToDB(item);
+            TodoService.StoreDataToDB(item);
             var response = new
             {
                 Message = "Request processed successfully!",
@@ -40,7 +40,7 @@ namespace VR_ITbackendApp.Controllers
         [HttpGet]
         public IActionResult GetAllToDos()
         {
-            TodoItem[] todo = DBService.LoadToDoTable();
+            TodoItem[] todo = TodoService.LoadToDoTable();
             var response = new
             {
                 Message = "Request processed successfully!",
@@ -52,7 +52,7 @@ namespace VR_ITbackendApp.Controllers
         [HttpGet]
         public IActionResult GetToDoById(int Id)
         {
-            TodoItem todo = DBService.LoadToDoById(Id);
+            TodoItem todo = TodoService.LoadToDoById(Id);
             if (todo == null) return NotFound();
             todo.Id = Id;
             var response = new
@@ -66,7 +66,7 @@ namespace VR_ITbackendApp.Controllers
         [HttpPut]
         public IActionResult UpdateToDoById(TodoItem item)
         {
-            bool result = DBService.UpdateDataToDB(item);
+            bool result = TodoService.UpdateDataToDB(item);
             if (!result) return NotFound();
             var response = new
             {
@@ -79,7 +79,7 @@ namespace VR_ITbackendApp.Controllers
         [HttpDelete]
         public IActionResult RemoveToDoById(int Id)
         {
-            bool result = DBService.RemoveToDoById(Id);
+            bool result = TodoService.RemoveToDoById(Id);
             if (!result) return NotFound();
             var response = new
             {
