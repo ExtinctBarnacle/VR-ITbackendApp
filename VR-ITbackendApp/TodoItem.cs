@@ -6,5 +6,10 @@
         public string? Title { get; set; } //(обязательно, максимальная длина: 100);
         public bool IsCompleted { get; set; } // default value = false
         public DateTime CreatedAt { get; set; }
+
+        public TodoItem(string Title)
+        {
+            this.Title = Title;
+        }
     }
 }

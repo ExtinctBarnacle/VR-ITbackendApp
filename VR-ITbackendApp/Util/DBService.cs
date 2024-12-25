@@ -8,12 +8,12 @@ namespace VR_ITbackendApp
         static string СonnectionString = "Data Source=toDoDatabase.db; Version=3;";
 
         // метод создаёт таблицу ToDoList (список дел), если в БД toDoDatabase.db такой таблицы нет
-        public static void CreateChatTable()
+        public static void CreateToDoTable()
         {
             using (SQLiteConnection connection = new SQLiteConnection(СonnectionString))
             {
                 connection.Open();
-                string createTableQuery = "CREATE TABLE IF NOT EXISTS ToDoList (Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, IsCompleted BOOLEAN, CreatedAt TEXT)";
+                string createTableQuery = "CREATE TABLE IF NOT EXISTS ToDoList (Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT(100), IsCompleted BOOLEAN DEFAULT(FALSE), CreatedAt datetime)";
                 using (SQLiteCommand command = new SQLiteCommand(createTableQuery, connection))
                 {
                     command.ExecuteNonQuery();
@@ -28,12 +28,12 @@ namespace VR_ITbackendApp
             using (SQLiteConnection connection = new SQLiteConnection(СonnectionString))
             {
                 connection.Open();
-                string insertQuery = "INSERT INTO ToDoList (Title,IsCompleted, CreatedAt) VALUES (@Title, @CreatedAt, @IsCompleted)";
+                string insertQuery = "INSERT INTO ToDoList (Title,IsCompleted, CreatedAt) VALUES (@Title, @IsCompleted, @CreatedAt)";
                 using (SQLiteCommand command = new SQLiteCommand(insertQuery, connection))
                 {
                     command.Parameters.AddWithValue("@Title", toDo.Title);
-                    command.Parameters.AddWithValue("@CreatedAt", toDo.CreatedAt);
                     command.Parameters.AddWithValue("@IsCompleted", toDo.IsCompleted);
+                    command.Parameters.AddWithValue("@CreatedAt", toDo.CreatedAt);
                     command.ExecuteNonQuery();
                 }
                 connection.Close();
@@ -41,7 +41,7 @@ namespace VR_ITbackendApp
         }
 
         // метод читает из БД и возвращает список дел
-        public static TodoItem[] LoadChatTable()
+        public static TodoItem[] LoadToDoTable()
         {
             using (SQLiteConnection connection = new SQLiteConnection(СonnectionString))
             {
@@ -54,10 +54,10 @@ namespace VR_ITbackendApp
                         TodoItem[] toDo = new TodoItem[1];
                         while (reader.Read())
                         {
-                            toDo[^1] = new TodoItem();
-                            toDo[^1].Title = (string)reader[1];
-                            toDo[^1].CreatedAt = (DateTime)reader[2];
-                            toDo[^1].IsCompleted = (bool)reader[3];
+                            toDo[^1] = new TodoItem("");
+                            toDo[^1].Title = (string) reader[1];
+                            toDo[^1].IsCompleted = (bool) reader[2];
+                            toDo[^1].CreatedAt = (DateTime) reader[3];
                             Array.Resize(ref toDo, toDo.Length + 1);
                         }
                         Array.Resize(ref toDo, toDo.Length - 1);
@@ -65,6 +65,83 @@ namespace VR_ITbackendApp
                         return toDo;
                     }
                 }
+            }
+        }
+
+        // метод находит в БД дело по номеру
+        public static TodoItem LoadToDoById(int Id)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(СonnectionString))
+            {
+                connection.Open();
+                string selectQuery = "SELECT * FROM ToDoList where Id = @Id";
+                using (SQLiteCommand command = new SQLiteCommand(selectQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", Id);
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        TodoItem toDo = new TodoItem("");
+                        if (reader.HasRows && reader.Read())
+                        {
+                            toDo.Id = (int)(long) reader[0];
+                            if (toDo.Id != Id)
+                            {
+                                return null;
+                            }
+                            toDo.Title = (string)reader[1];
+                            toDo.IsCompleted = (bool)reader[2];
+                            toDo.CreatedAt = (DateTime)reader[3];
+                        } else return null;
+                        connection.Close();
+                        return toDo;
+                    }
+                }
+            }
+        }
+
+        // метод удаляет в таблице ToDoList дело с номером, указанным клиентом
+        public static bool RemoveToDoById(int Id)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(СonnectionString))
+            {
+                connection.Open();
+                string selectQuery = "DELETE * FROM ToDoList where Id = @Id";
+                using (SQLiteCommand command = new SQLiteCommand(selectQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", Id);
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        connection.Close();
+                        return false;
+                    }
+                    connection.Close();
+                    return true;
+                    }
+                }
+            }
+        }
+
+        // метод обновляет в таблице ToDoList дело с номером, указанным клиентом
+        public static bool UpdateDataToDB(TodoItem toDo)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(СonnectionString))
+            {
+                connection.Open();
+                string insertQuery = "UPDATE ToDoList SET Title = @Title, IsCompleted = @IsCompleted, CreatedAt = @CreatedAt WHERE Id = @Id";
+                using (SQLiteCommand command = new SQLiteCommand(insertQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", toDo.Id);
+                    command.Parameters.AddWithValue("@Title", toDo.Title);
+                    command.Parameters.AddWithValue("@IsCompleted", toDo.IsCompleted);
+                    command.Parameters.AddWithValue("@CreatedAt", toDo.CreatedAt);
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+                return true;
             }
         }
     }
