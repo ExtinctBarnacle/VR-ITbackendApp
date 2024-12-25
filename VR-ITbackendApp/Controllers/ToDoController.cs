@@ -28,11 +28,6 @@ namespace VR_ITbackendApp.Controllers
             {
                 return BadRequest("Invalid request");
             }
-            List<TodoItem> todo = new List<TodoItem>();
-            item.Id = 1;
-            item.IsCompleted = false;
-            item.CreatedAt = DateTime.Now;
-            todo.Add(item);
             DBService.StoreDataToDB(item);
             var response = new
             {

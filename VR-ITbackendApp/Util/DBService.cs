@@ -120,7 +120,6 @@ namespace VR_ITbackendApp
                     }
                     connection.Close();
                     return true;
-                    }
                 }
             }
         }
@@ -138,7 +137,15 @@ namespace VR_ITbackendApp
                     command.Parameters.AddWithValue("@Title", toDo.Title);
                     command.Parameters.AddWithValue("@IsCompleted", toDo.IsCompleted);
                     command.Parameters.AddWithValue("@CreatedAt", toDo.CreatedAt);
-                    command.ExecuteNonQuery();
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        connection.Close();
+                        return false;
+                    }
                 }
                 connection.Close();
                 return true;
