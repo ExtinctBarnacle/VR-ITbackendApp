@@ -114,7 +114,7 @@ namespace VR_ITbackendApp
                     {
                         command.ExecuteNonQuery();
                     }
-                    catch (Exception ex)
+                    catch //(Exception ex)
                     {
                         connection.Close();
                         return false;
@@ -142,7 +142,7 @@ namespace VR_ITbackendApp
                     {
                         command.ExecuteNonQuery();
                     }
-                    catch (Exception ex)
+                    catch //(Exception ex)
                     {
                         connection.Close();
                         return false;

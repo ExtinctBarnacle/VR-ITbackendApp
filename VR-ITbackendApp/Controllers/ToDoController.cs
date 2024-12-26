@@ -6,18 +6,17 @@ namespace VR_ITbackendApp.Controllers
     [Route("[controller]")]
     public class ToDoController : Controller
     {
-        [HttpGet]
+        
         public IActionResult Index()
         {
         var response = new 
         {
-            ReceivedData = "<html><body><a href=\"https://localhost:7102/api/todo\">Add Todo Item</a></body></html>",
-            ContentType = "text/html; charset=utf-8"
+            ContentType = "text/html; charset=utf-8",
+            ReceivedData = "<html><body><a href=\"https://localhost:7102/api/todo\">Add Todo Item</a></body></html>"
         };
             return Ok(response);
         }
-
-        [HttpPost]
+        
         public IActionResult AddToDo ([FromBody] TodoItem item)
         {
             if (item == null)
@@ -31,59 +30,61 @@ namespace VR_ITbackendApp.Controllers
             TodoService.StoreDataToDB(item);
             var response = new
             {
-                Message = "Request processed successfully!",
+                Message = "Todo successfully added:",
                 ReceivedData = item
             };
 
             return Ok(response);
         }
-        [HttpGet]
+        
         public IActionResult GetAllToDos()
         {
             TodoItem[] todo = TodoService.LoadToDoTable();
             var response = new
             {
-                Message = "Request processed successfully!",
+                Message = "Database contains todos:",
                 ReceivedData = todo
             };
 
             return Ok(response);
         }
-        [HttpGet]
-        public IActionResult GetToDoById(int Id)
+        
+        public IActionResult GetToDoById(string Id)
         {
-            TodoItem todo = TodoService.LoadToDoById(Id);
+            if (!int.TryParse(Id, out int result)) return NotFound();
+            int id = int.Parse(Id);
+            TodoItem todo = TodoService.LoadToDoById(id);
             if (todo == null) return NotFound();
-            todo.Id = Id;
+            todo.Id = id;
             var response = new
             {
-                Message = "Request processed successfully!",
+                Message = $"Todo with index {Id} successfully found",
                 ReceivedData = todo
             };
-
             return Ok(response);
         }
-        [HttpPut]
+       
         public IActionResult UpdateToDoById(TodoItem item)
         {
             bool result = TodoService.UpdateDataToDB(item);
             if (!result) return NotFound();
             var response = new
             {
-                Message = "Request processed successfully!",
+                Message = $"Todo with index {item.Id} successfully updated",
                 ReceivedData = ""
             };
-
             return Ok(response);
         }
-        [HttpDelete]
-        public IActionResult RemoveToDoById(int Id)
+        
+        public IActionResult RemoveToDoById(string Id)
         {
-            bool result = TodoService.RemoveToDoById(Id);
-            if (!result) return NotFound();
+            if (!int.TryParse(Id, out int result)) return NotFound();
+            int id = int.Parse(Id);
+            bool removed = TodoService.RemoveToDoById(id);
+            if (!removed) return NotFound();
             var response = new
             {
-                Message = "Request processed successfully!",
+                Message = $"Todo with index {Id} successfully removed",
                 ReceivedData = ""
             };
 
