@@ -106,18 +106,18 @@ namespace VR_ITbackendApp
             using (SQLiteConnection connection = new SQLiteConnection(СonnectionString))
             {
                 connection.Open();
-                string selectQuery = "DELETE * FROM ToDoList where Id = @Id";
+                string selectQuery = "DELETE FROM ToDoList where Id = @Id";
                 using (SQLiteCommand command = new SQLiteCommand(selectQuery, connection))
                 {
                     command.Parameters.AddWithValue("@Id", Id);
-                    try
+                    //try
                     {
                         command.ExecuteNonQuery();
                     }
-                    catch //(Exception ex)
+                    //catch //(System.Data.SQLite.SQLiteException ex)
                     {
-                        connection.Close();
-                        return false;
+                        //connection.Close();
+                        //return false;
                     }
                     connection.Close();
                     return true;
@@ -128,6 +128,8 @@ namespace VR_ITbackendApp
         // метод обновляет в таблице ToDoList дело с номером, указанным клиентом
         public static bool UpdateDataToDB(TodoItem toDo)
         {
+            TodoItem oldTodo = LoadToDoById(toDo.Id);
+            if (oldTodo == null) return false;
             using (SQLiteConnection connection = new SQLiteConnection(СonnectionString))
             {
                 connection.Open();
@@ -137,15 +139,15 @@ namespace VR_ITbackendApp
                     command.Parameters.AddWithValue("@Id", toDo.Id);
                     command.Parameters.AddWithValue("@Title", toDo.Title);
                     command.Parameters.AddWithValue("@IsCompleted", toDo.IsCompleted);
-                    command.Parameters.AddWithValue("@CreatedAt", toDo.CreatedAt);
-                    try
+                    command.Parameters.AddWithValue("@CreatedAt", oldTodo.CreatedAt);
+                    //try
                     {
                         command.ExecuteNonQuery();
                     }
-                    catch //(Exception ex)
+                    //catch //(System.Data.SQLite.SQLiteException ex)
                     {
-                        connection.Close();
-                        return false;
+                        //connection.Close();
+                        //return false;
                     }
                 }
                 connection.Close();

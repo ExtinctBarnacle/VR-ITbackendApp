@@ -6,7 +6,6 @@ namespace VR_ITbackendApp.Controllers
     [Route("[controller]")]
     public class ToDoController : Controller
     {
-        
         public IActionResult Index()
         {
         var response = new 
@@ -33,7 +32,6 @@ namespace VR_ITbackendApp.Controllers
                 Message = "Todo successfully added:",
                 ReceivedData = item
             };
-
             return Ok(response);
         }
         
@@ -45,7 +43,6 @@ namespace VR_ITbackendApp.Controllers
                 Message = "Database contains todos:",
                 ReceivedData = todo
             };
-
             return Ok(response);
         }
         
@@ -64,14 +61,17 @@ namespace VR_ITbackendApp.Controllers
             return Ok(response);
         }
        
-        public IActionResult UpdateToDoById(TodoItem item)
+        public IActionResult UpdateToDoById(string Id, TodoItem item)
         {
-            bool result = TodoService.UpdateDataToDB(item);
-            if (!result) return NotFound();
+            if (!int.TryParse(Id, out int result)) return NotFound();
+            int id = int.Parse(Id);
+            item.Id = id;
+            bool outcome = TodoService.UpdateDataToDB(item);
+            if (!outcome) return NotFound();
             var response = new
             {
                 Message = $"Todo with index {item.Id} successfully updated",
-                ReceivedData = ""
+                ReceivedData = item
             };
             return Ok(response);
         }
@@ -87,7 +87,6 @@ namespace VR_ITbackendApp.Controllers
                 Message = $"Todo with index {Id} successfully removed",
                 ReceivedData = ""
             };
-
             return Ok(response);
         }
     }

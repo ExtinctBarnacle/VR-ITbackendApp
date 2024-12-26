@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div id="userInfo" style="display:none;">
+        <p>TODO of user: <span id="userName"></span></p>
+        <input type="button" value="Выйти" id="logOut" />
+    </div>
+    <div id="loginForm">
+        <h3>Вход на сайт</h3>
+        <p>
+            <label>Введите login</label><br />
+            <input type="email" id="email" value ="test" />
+        </p>
+        <p>
+            <label>Введите пароль</label><br />
+            <input type="password" id="password" />
+        </p>
+        <input type="submit" id="submitLogin" value="Залогиниться" />
+    </div>
+    <p>
+        <input type="submit" id="getTodo" value="Показать список дел" />
+    </p>
+    <p>
+        <label>Номер дела</label><br />
+        <input type="taskId" id="taskId" />
+    </p>
+    <p>
+        <label>Текст дела</label><br />
+        <input type="Title" id="Title" />
+    </p>
+    <p>
+        <label>Выполнено (0 - нет, 1 - да)</label><br />
+        <input type="isCompleted" id="isCompleted" />
+    </p>
+    <p>
+        <input type="submit" id="addTodo" value="Добавить дело" />
+    </p>
+    <p>
+        <input type="submit" id="getTodoById" value="Показать дело" />
+    </p>
+    <p>
+        <input type="submit" id="updateTodoById" value="Изменить дело" />
+    </p>
+    <p>
+        <input type="submit" id="deleteTodoById" value="Удалить дело" />
+    </p>
+    <p>
+        <label>Результат</label><br />
+        <input type="outcome" id="outcome" size="100" />
+    </p>
+    <script>
+        var tokenKey = "accessToken";
+        // кнопка отправки формы - запрос к /login для получения токена
+        document.getElementById("submitLogin").addEventListener("click", async e => {
+            e.preventDefault();
+            // отправляет запрос и получает ответ
+            const response = await fetch("/login/" + document.getElementById("email").value, {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: document.getElementById("email").value,
+                    password: document.getElementById("password").value
+                })
+            });
+            // если запрос прошел
+            if (response.ok === true) {
+                // получаем данные
+                const data = await response.json();
+                // изменяем содержимое и видимость блоков на странице
+                document.getElementById("userName").innerText = data.username;
+                document.getElementById("userInfo").style.display = "block";
+                document.getElementById("loginForm").style.display = "none";
+                // сохраняем в хранилище sessionStorage токен доступа
+                sessionStorage.setItem(tokenKey, data.access_token);
+
+            }
+            else  // если произошла ошибка
+                console.log("Status: ", response.status);
+        });
+
+        // кнопка для обращения по пути "/api/todo" (список дел)
+        document.getElementById("getTodo").addEventListener("click", async e => {
+            e.preventDefault();
+            // получаем токен из sessionStorage
+            const token = sessionStorage.getItem(tokenKey);
+            const response = await fetch("/api/todo/", {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Authorization": "Bearer " + token  // передача токена в заголовке
+                }
+            });
+            if (response.ok === true) {
+                const data = await response.json(); // Извлекаем JSON данные
+                // Теперь работаем с полученными данными
+                document.getElementById('outcome').value = JSON.stringify(data.value["message"]) + " " + JSON.stringify(data.value["receivedData"]);
+                // Здесь выводим полученные данные
+            } else {
+                console.log("Status: ", response.status); // Если запрос не успешен
+            }
+        });
+
+        // кнопка для обращения по пути "/api/todo/{Id}" (показать дело)
+        document.getElementById("getTodoById").addEventListener("click", async e => {
+            e.preventDefault();
+            // получаем токен из sessionStorage
+            const token = sessionStorage.getItem(tokenKey);
+            const response = await fetch("/api/todo/" + document.getElementById("taskId").value, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Authorization": "Bearer " + token  // передача токена в заголовке
+                }
+            });
+            console.log("/api/todo/" + document.getElementById("taskId").value);
+            if (response.ok === true) {
+                const data = await response.json(); // Извлекаем JSON данные
+                // Теперь работаем с полученными данными
+                console.log(data);
+                console.log(data.value["receivedData"]);
+                document.getElementById('outcome').value = JSON.stringify(data.value["message"]) + " " + JSON.stringify(data.value["receivedData"]);
+                // Здесь выводим полученные данные
+            } else {
+                console.log("Status: ", response.status); // Если запрос не успешен
+                document.getElementById('outcome').value = "Дело не найдено";
+            }
+        });
+
+        // кнопка для обращения по пути "/api/todo" (добавить дело)
+        document.getElementById("addTodo").addEventListener("click", async e => {
+            e.preventDefault();
+            // получаем токен из sessionStorage
+            const token = sessionStorage.getItem(tokenKey);
+            const response = await fetch("/api/todo?" + "Title=" + document.getElementById("Title").value + "&isCompleted=" + document.getElementById("isCompleted").value, {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Authorization": "Bearer " + token  // передача токена в заголовке
+                }
+            });
+            console.log("/api/todo?" + "Title=" + document.getElementById("Title").value + "&isCompleted=" + document.getElementById("isCompleted").value);
+            if (response.ok === true) {
+                const data = await response.json(); // Извлекаем JSON данные
+                // Теперь работаем с полученными данными
+                console.log(data);
+                console.log(data.value["receivedData"]);
+                document.getElementById('outcome').value = JSON.stringify(data.value["message"]) + " " + JSON.stringify(data.value["receivedData"]);
+                // Здесь выводим полученные данные
+            } else {
+                console.log("Status: ", response.status); // Если запрос не успешен
+                document.getElementById('outcome').value = "Дело не найдено";
+            }
+        });
+
+        // кнопка для обращения по пути "/api/todo/{Id}" (изменить дело)
+        document.getElementById("updateTodoById").addEventListener("click", async e => {
+            e.preventDefault();
+            // получаем токен из sessionStorage
+            const token = sessionStorage.getItem(tokenKey);
+            const response = await fetch("/api/todo/" + document.getElementById("taskId").value+"?Title=" + document.getElementById("Title").value + "&isCompleted=" + document.getElementById("isCompleted").value, {
+                method: "PUT",
+                headers: {
+                    "Accept": "application/json",
+                    "Authorization": "Bearer " + token  // передача токена в заголовке
+                }
+            });
+            console.log("/api/todo/" + document.getElementById("taskId").value + "?Title=" + document.getElementById("Title").value + "&isCompleted=" + document.getElementById("isCompleted").value);
+            if (response.ok === true) {
+                const data = await response.json(); // Извлекаем JSON данные
+                // Теперь работаем с полученными данными
+                console.log(data);
+                console.log(data.value["receivedData"]);
+                document.getElementById('outcome').value = JSON.stringify(data.value["message"]) + " " + JSON.stringify(data.value["receivedData"]);
+                // Здесь выводим полученные данные
+            } else {
+                console.log("Status: ", response.status); // Если запрос не успешен
+                document.getElementById('outcome').value = "Дело не удалось изменить";
+            }
+        });
+
+        // кнопка для обращения по пути "/api/todo/{Id}" (удалить дело)
+        document.getElementById("deleteTodoById").addEventListener("click", async e => {
+            e.preventDefault();
+            // получаем токен из sessionStorage
+            const token = sessionStorage.getItem(tokenKey);
+            const response = await fetch("/api/todo/" + document.getElementById("taskId").value, {
+                method: "DELETE",
+                headers: {
+                    "Accept": "application/json",
+                    "Authorization": "Bearer " + token  // передача токена в заголовке
+                }
+            });
+            console.log("/api/todo/" + document.getElementById("taskId").value);
+            if (response.ok === true) {
+                const data = await response.json(); // Извлекаем JSON данные
+                // Теперь работаем с полученными данными
+                console.log(data.value["message"]);
+                console.log(data.value["receivedData"]);
+                document.getElementById('outcome').value = JSON.stringify(data.value["message"]) + " " + JSON.stringify(data.value["receivedData"]);
+                // Здесь выводим полученные данные
+            } else {
+                console.log("Status: ", response.status); // Если запрос не успешен
+                document.getElementById('outcome').value = "Дело не удалось изменить";
+            }
+        });
+
+        // выход - удаляем токен и меняем видимость блоков
+        document.getElementById("logOut").addEventListener("click", e => {
+            e.preventDefault();
+            document.getElementById("userName").innerText = "";
+            document.getElementById("userInfo").style.display = "none";
+            document.getElementById("loginForm").style.display = "block";
+            sessionStorage.removeItem(tokenKey);
+        });
+    </script>
+</body>
+</html>
