@@ -2,19 +2,19 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace VR_ITbackendApp
+namespace VR_ITbackendApp.Middleware
 {
     public class ToDoMiddleware
     {
         //для регистрации сведений о входящих HTTP-запросах (например, URL, метод, заголовки
-        public static void RegisterRequest(HttpRequest request) 
+        public static void RegisterRequest(HttpRequest request)
         {
             // регистрировать данные в консоли
             Console.WriteLine(request.Path.ToString());
             Console.WriteLine(request.Method.ToString());
             Console.WriteLine(request.Headers.ToString());
         }
-        public static void GetAuthToken(Microsoft.AspNetCore.Builder.WebApplicationBuilder builder)
+        public static void GetAuthToken(WebApplicationBuilder builder)
         {
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

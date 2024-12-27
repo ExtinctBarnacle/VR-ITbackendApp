@@ -5,6 +5,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using VR_ITbackendApp.Models;
+using VR_ITbackendApp.Middleware;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -19,6 +21,7 @@ app.UseStaticFiles();
 TodoService.CreateToDoTable();
 ToDoController toDoController = new ToDoController();
 
+// регистрация пользователя - формирование токена
 app.Map("/login/{username}", (string username, HttpContext context) =>
 {
     ToDoMiddleware.RegisterRequest(context.Request);
@@ -51,7 +54,7 @@ app.MapPost("/api/todo",
     foreach (var param in context.Request.Query)
     {
         if (param.Key == "Title") toDo.Title = param.Value;
-        if (param.Key == "IsCompleted") toDo.IsCompleted = param.Value == "0" ? false : true;
+        if (param.Key == "isCompleted") toDo.IsCompleted = param.Value == "0" ? false : true;
     }
     toDo.CreatedAt = DateTime.Now;
     return toDoController.AddToDo(toDo);
@@ -82,7 +85,7 @@ app.MapPut("/api/todo/{id}",
     foreach (var param in context.Request.Query)
     {
          if (param.Key == "Title") toDo.Title = param.Value;
-         if (param.Key == "IsCompleted") toDo.IsCompleted = param.Value == "0" ? false : true;
+         if (param.Key == "isCompleted") toDo.IsCompleted = param.Value == "0" ? false : true;
     }
     return toDoController.UpdateToDoById(id, toDo);
 });

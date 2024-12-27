@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using VR_ITbackendApp.Util;
+using VR_ITbackendApp.Models;
 
 namespace VR_ITbackendApp.Controllers
 {
@@ -7,15 +7,15 @@ namespace VR_ITbackendApp.Controllers
     [Route("[controller]")]
     public class ToDoController : Controller
     {
-        public IActionResult Index()
-        {
-        var response = new 
-        {
-            ContentType = "text/html; charset=utf-8",
-            ReceivedData = "<html><body><a href=\"https://localhost:7102/api/todo\">Add Todo Item</a></body></html>"
-        };
-            return Ok(response);
-        }
+        //public IActionResult Index()
+        //{
+        //var response = new 
+        //{
+        //    ContentType = "text/html; charset=utf-8",
+        //    ReceivedData = "<html><body><a href=\"https://localhost:7102/api/todo\">Add Todo Item</a></body></html>"
+        //};
+        //    return Ok(response);
+        //}
         
         public IActionResult AddToDo ([FromBody] TodoItem item)
         {

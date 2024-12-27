@@ -1,4 +1,4 @@
-﻿namespace VR_ITbackendApp
+﻿namespace VR_ITbackendApp.Models
 {
     public class TodoItem
     {

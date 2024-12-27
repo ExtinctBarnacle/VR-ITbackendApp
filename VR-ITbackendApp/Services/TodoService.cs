@@ -1,4 +1,5 @@
 ﻿using System.Data.SQLite;
+using VR_ITbackendApp.Models;
 using VR_ITbackendApp.Util;
 
 namespace VR_ITbackendApp

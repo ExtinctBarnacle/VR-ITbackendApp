@@ -1,4 +1,6 @@
-﻿namespace VR_ITbackendApp.Util
+﻿using VR_ITbackendApp.Models;
+
+namespace VR_ITbackendApp.Util
 {
     public interface ITodoService
     {
