@@ -50,5 +50,4 @@ namespace VR_ITbackendApp
         public static SymmetricSecurityKey GetSymmetricSecurityKey() =>
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY));
     }
-
 }

@@ -110,14 +110,15 @@ namespace VR_ITbackendApp
                 using (SQLiteCommand command = new SQLiteCommand(selectQuery, connection))
                 {
                     command.Parameters.AddWithValue("@Id", Id);
-                    //try
+                    try
                     {
                         command.ExecuteNonQuery();
                     }
-                    //catch //(System.Data.SQLite.SQLiteException ex)
+                    catch (System.Data.SQLite.SQLiteException ex)
                     {
-                        //connection.Close();
-                        //return false;
+                        Console.WriteLine(ex.Message);
+                        connection.Close();
+                        return false;
                     }
                     connection.Close();
                     return true;
@@ -140,14 +141,15 @@ namespace VR_ITbackendApp
                     command.Parameters.AddWithValue("@Title", toDo.Title);
                     command.Parameters.AddWithValue("@IsCompleted", toDo.IsCompleted);
                     command.Parameters.AddWithValue("@CreatedAt", oldTodo.CreatedAt);
-                    //try
+                    try
                     {
                         command.ExecuteNonQuery();
                     }
-                    //catch //(System.Data.SQLite.SQLiteException ex)
+                    catch (System.Data.SQLite.SQLiteException ex)
                     {
-                        //connection.Close();
-                        //return false;
+                        Console.WriteLine(ex.Message);
+                        connection.Close();
+                        return false;
                     }
                 }
                 connection.Close();
