@@ -1,5 +1,6 @@
 ﻿namespace VR_ITbackendApp.Models
 {
+ // класс-сущность для работы с БД
     public class TodoItem
     {
         public int Id { get; set; }

@@ -19,6 +19,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 TodoService.CreateToDoTable();
+Console.WriteLine("Приложение запущено. Целостность базы данных проверена.");
 ToDoController toDoController = new ToDoController();
 
 // регистрация пользователя - формирование токена

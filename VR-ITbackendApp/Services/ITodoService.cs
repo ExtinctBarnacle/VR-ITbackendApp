@@ -2,6 +2,8 @@
 
 namespace VR_ITbackendApp.Util
 {
+    
+    // интерфейс для объявления операций со списком дел
     public interface ITodoService
     {
         public abstract static void CreateToDoTable();
