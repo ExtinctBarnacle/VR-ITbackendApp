@@ -18,16 +18,18 @@ app.UseAuthorization();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+// creates new TODO table if it does not exist
 TodoService.CreateToDoTable();
-Console.WriteLine("Приложение запущено. Целостность базы данных проверена.");
+Console.WriteLine("App has started. Database availability was checked."); // Приложение запущено. Целостность базы данных проверена.
 ToDoController toDoController = new ToDoController();
 
-// регистрация пользователя - формирование токена
+// авторизация пользователя - формирование токена
+//creates token for user authorization
 app.Map("/login/{username}", (string username, HttpContext context) =>
 {
     ToDoMiddleware.RegisterRequest(context.Request);
     var claims = new List<Claim> { new Claim(ClaimTypes.Name, username) };
-    // создаем JWT-токен
+    // создание JWT-токена
     var jwt = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
             audience: AuthOptions.AUDIENCE,
@@ -46,6 +48,7 @@ app.Map("/login/{username}", (string username, HttpContext context) =>
 });
 
 //Создать новый элемент todo
+//adds todo in DB
 app.MapPost("/api/todo", 
     [Authorize]
 [HttpPost] (HttpContext context) => {
@@ -62,6 +65,7 @@ app.MapPost("/api/todo",
     });
 
 //Получить все элементы todo
+//gets all todo's from DB
 app.MapGet("/api/todo", 
     [Authorize]
 [HttpGet] (HttpContext context) => {
@@ -70,6 +74,7 @@ app.MapGet("/api/todo",
 });
 
 //Получить один элемент todo по его идентификатору
+//gets todo by index
 app.MapGet("/api/todo/{id}", 
     [Authorize]
     [HttpGet] (string id, HttpContext context) => {
@@ -78,6 +83,7 @@ app.MapGet("/api/todo/{id}",
 });
 
 //Обновить элемент todo по его идентификатору
+//updates todo by index
 app.MapPut("/api/todo/{id}", 
     [Authorize]
     [HttpPut] (string id, HttpContext context) => {
@@ -92,6 +98,7 @@ app.MapPut("/api/todo/{id}",
 });
 
 //Удалить элемент todo по его идентификатору
+//removes todo by index
 app.MapDelete("/api/todo/{id}", 
     [Authorize]
 [HttpDelete] (string id, HttpContext context) => {

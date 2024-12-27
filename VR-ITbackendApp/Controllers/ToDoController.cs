@@ -66,7 +66,6 @@ namespace VR_ITbackendApp.Controllers
             };
             return Ok(response);
         }
-        
         public IActionResult RemoveToDoById(string Id)
         {
             if (!int.TryParse(Id, out int result)) return NotFound();

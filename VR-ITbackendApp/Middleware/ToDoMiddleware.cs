@@ -6,7 +6,7 @@ namespace VR_ITbackendApp.Middleware
 {
     public class ToDoMiddleware
     {
-        //для регистрации сведений о входящих HTTP-запросах (например, URL, метод, заголовки
+        //для регистрации сведений о входящих HTTP-запросах (URL, метод, заголовки)
         public static void RegisterRequest(HttpRequest request)
         {
             // регистрировать данные в консоли
